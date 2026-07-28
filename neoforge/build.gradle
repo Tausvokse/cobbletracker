@@ -1,0 +1,93 @@
+architectury {
+    platformSetupLoomIde()
+    neoForge()
+}
+
+configurations {
+    common
+    shadowBundle
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentNeoForge.extendsFrom common
+}
+
+dependencies {
+    neoForge "net.neoforged:neoforge:${neoforge_version}"
+    modImplementation "dev.architectury:architectury-neoforge:${architectury_api_version}"
+    modImplementation "com.cobblemon:neoforge:${cobblemon_version}"
+
+    common(project(path: ':mod', configuration: 'namedElements')) { transitive = false }
+    shadowBundle project(path: ':mod', configuration: 'transformProductionNeoForge')
+
+    // Logic module + YAML lib, bundled into the jar. Non-transitive so gson/slf4j (provided by
+    // Minecraft) are not shaded in.
+    shadowBundle(project(':common')) { transitive = false }
+    shadowBundle "org.yaml:snakeyaml:${snakeyaml_version}"
+
+    // Kotlin-for-Forge is Cobblemon's modLoader on NeoForge. It is a separately-installed mod in
+    // production (NOT shipped in our jar) — but a dev runClient/runServer must register it or FML
+    // rejects Cobblemon.
+    modLocalRuntime "thedarkcolour:kotlinforforge-neoforge:5.12.0"
+    // KFF ships the Kotlin runtime as jar-in-jar, which a dev run does NOT unpack; the Maven Kotlin
+    // jars have no FML manifest, so on a plain classpath they sit in the unnamed module and are
+    // invisible to NeoForge's module classloader. forgeRuntimeLibrary puts them on the dev module
+    // path as game libraries. Dev-run only — not shipped in our jar.
+    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:2.4.0"
+    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-reflect:2.4.0"
+    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.11.0"
+    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.11.0"
+    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.11.0"
+    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.11.0"
+
+    // Dev-runtime only: shadowBundle is jar-only, so the logic module and YAML lib must be on the dev
+    // module path too. Not shipped in the remapped jar.
+    forgeRuntimeLibrary(project(':common')) { transitive = false }
+    forgeRuntimeLibrary "org.yaml:snakeyaml:${snakeyaml_version}"
+}
+
+// Dev run configs for live-testing the NeoForge build. Launch with :neoforge:runServer,
+// :neoforge:runClient and :neoforge:runClientBlue.
+loom {
+    runs {
+        client {
+            client()
+            name = "NeoForge Client (TrackerRed)"
+            runDir = "run/client-red"
+            programArgs "--username", "TrackerRed", "--width", "950", "--height", "720"
+        }
+        clientBlue {
+            client()
+            name = "NeoForge Client (TrackerBlue)"
+            runDir = "run/client-blue"
+            programArgs "--username", "TrackerBlue", "--width", "950", "--height", "720"
+        }
+        server {
+            server()
+            name = "NeoForge Server"
+            runDir = "run/server"
+        }
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand version: project.version, mod_id: mod_id, mod_name: mod_name, mod_description: mod_description,
+                mod_license: mod_license, mod_authors: mod_authors,
+                neoforge_version: neoforge_version, minecraft_version_range: minecraft_version_range,
+                loader_version_range: loader_version_range
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    // Relocate SnakeYAML so it can never clash with another mod bundling a different version.
+    relocate 'org.yaml.snakeyaml', 'com.cobbletracker.libs.snakeyaml'
+    archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveClassifier = null
+}

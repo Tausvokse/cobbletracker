@@ -1,0 +1,22 @@
+pluginManagement {
+    repositories {
+        maven { name = 'Fabric'; url = 'https://maven.fabricmc.net/' }
+        maven { name = 'Architectury'; url = 'https://maven.architectury.dev/' }
+        maven { name = 'NeoForged'; url = 'https://maven.neoforged.net/releases/' }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
+
+rootProject.name = 'cobbletracker'
+
+// :common — pure-Java logic (spawn model, spec matching, geometry, obfuscation). No Minecraft; unit-tested.
+include 'common'
+// Architectury cross-loader mod layered on top of :common.
+include 'mod'       // shared Minecraft/Cobblemon-facing code (Architectury common)
+include 'fabric'
+include 'neoforge'

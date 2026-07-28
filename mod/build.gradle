@@ -1,0 +1,20 @@
+architectury {
+    common('fabric', 'neoforge')
+}
+
+dependencies {
+    modImplementation "dev.architectury:architectury:${architectury_api_version}"
+    // Cobblemon is a runtime dependency; the common module only compiles against its API.
+    modCompileOnly "com.cobblemon:mod:${cobblemon_version}"
+    // Cobblemon's API is Kotlin (kotlin.Unit, Function types); provided at runtime by
+    // fabric-language-kotlin / KotlinForForge. fabric-loader supplies @Environment/EnvType that
+    // Architectury's common classes reference.
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
+    compileOnly "net.fabricmc:fabric-loader:${fabric_loader_version}"
+
+    // YAML for the human-edited config.yml / announcements.yml (shaded + relocated into the jars).
+    implementation "org.yaml:snakeyaml:${snakeyaml_version}"
+
+    // Pure-Java logic module. Bundled into the platform jars.
+    api project(':common')
+}

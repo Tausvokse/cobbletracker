@@ -1,0 +1,70 @@
+// Root of the Architectury cross-loader build. The :common module is a pure-Java library with its own
+// build (java-library, unit-tested, no Minecraft). The :mod, :fabric and :neoforge modules are
+// Architectury/Loom modules, configured here so Loom detects the right platform for each. All the
+// version coordinates live in gradle.properties.
+plugins {
+    id 'architectury-plugin' version "${architectury_plugin_version}"
+    id 'dev.architectury.loom' version "${architectury_loom_version}" apply false
+    id 'com.github.johnrengelman.shadow' version "${shadow_version}" apply false
+}
+
+architectury {
+    minecraft = minecraft_version
+}
+
+subprojects {
+    // The pure-Java module keeps its own build (no Minecraft/Loom).
+    if (project.name == 'common') {
+        return
+    }
+
+    // Loom reads project.findProperty('loom.platform') (default: fabric) to pick forge/neoforge/fabric.
+    // Set it per module BEFORE applying Loom so the neoForge()/fabric() dependency methods register.
+    if (project.name == 'neoforge') {
+        project.extensions.extraProperties.set('loom.platform', 'neoforge')
+    } else {
+        project.extensions.extraProperties.set('loom.platform', 'fabric')
+    }
+
+    apply plugin: 'dev.architectury.loom'
+    apply plugin: 'architectury-plugin'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    base {
+        archivesName = "${mod_id}-${project.name}"
+    }
+    version = mod_version
+    group = maven_group
+
+    repositories {
+        mavenCentral()
+        maven { name = 'Architectury'; url = 'https://maven.architectury.dev/' }
+        maven { name = 'Fabric'; url = 'https://maven.fabricmc.net/' }
+        maven { name = 'NeoForged'; url = 'https://maven.neoforged.net/releases/' }
+        maven { name = 'KotlinForForge'; url = 'https://thedarkcolour.github.io/KotlinForForge/' }
+        maven { name = 'Cobblemon'; url = 'https://maven.impactdev.net/repository/development/' }
+        maven { name = 'Sonatype'; url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+    }
+
+    loom {
+        silentMojangMappingsLicense()
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:${minecraft_version}"
+        mappings loom.officialMojangMappings()
+    }
+
+    java {
+        withSourcesJar()
+        toolchain.languageVersion = JavaLanguageVersion.of(java_version as int)
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.release = java_version as int
+        // Compiles warning-free; keep it that way. -serial is off because none of our types are
+        // Serializable, and -processing because there are no annotation processors to complain about.
+        options.compilerArgs << '-Xlint:all,-processing,-serial'
+    }
+}

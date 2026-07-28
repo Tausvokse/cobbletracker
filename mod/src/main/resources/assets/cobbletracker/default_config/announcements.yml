@@ -1,0 +1,71 @@
+# ============================================================================
+#  CobbleTracker - announcements.yml
+#  How each category's spawn is announced. Keys match the category ids in
+#  config.yml (legendaries, shinies, bosses, ultrabeasts, ...).
+#
+#  Text is MiniMessage: <gold>, <bold>, <#RRGGBB>, <gradient:#a:#b>...</gradient>.
+#  Legacy &-codes (&6&l) work too. Placeholders:
+#    %species% %biome% %world% %x% %y% %z%
+#    %waypoint%  -> the coordinates as a clickable link; hovering shows
+#                   "Create Waypoint" and clicking drops it on your minimap.
+#                   Only appears if the player has a supported minimap.
+#
+#  title / subtitle only show if general-settings.show-title is true in
+#  config.yml. By default spawns are chat-only.
+#
+#  sound          sound id, or "" for none
+#  sound-volume   playback volume (1.0 = normal)
+#  sound-pitch    playback pitch  (1.0 = normal)
+#  waypoint       include the clickable %waypoint% link (true/false)
+#  play-to-all    true = everyone; false = only players near the spawn
+#  broadcast-radius 0 = whole server; >0 = only players within N blocks
+# ============================================================================
+
+notifications:
+  legendaries:
+    enabled: true
+    title: "<gold><bold>LEGENDARY SPAWN</bold></gold>"
+    subtitle: "<aqua>%species%</aqua> <white>appeared in the</white> <green>%biome%</green>!"
+    chat: "<white>A wild</white> <aqua>%species%</aqua> <white>appeared in the</white> <green>%biome%</green> <gray>at</gray> %waypoint%<gray>.</gray>"
+    sound: "cobblemon:pc.on"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: true
+    broadcast-radius: 0
+
+  shinies:
+    enabled: true
+    title: ""
+    subtitle: "<yellow>A Shiny %species% has spawned nearby!</yellow>"
+    chat: "<yellow>✨ A Shiny %species% spawned near</yellow> %waypoint%<yellow>!</yellow>"
+    sound: "cobblemon:pc.on"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: false
+    broadcast-radius: 200
+
+  bosses:
+    enabled: true
+    title: "<dark_red><bold>BOSS DETECTED</bold></dark_red>"
+    subtitle: "<red>Prepare for battle against %species%!</red>"
+    chat: "<red>A Boss</red> <dark_red>%species%</dark_red> <red>appeared in the</red> <green>%biome%</green> <gray>at</gray> %waypoint%<gray>.</gray>"
+    sound: "minecraft:entity.ender_dragon.growl"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: true
+    broadcast-radius: 0
+
+  ultrabeasts:
+    enabled: true
+    title: "<light_purple><bold>ULTRA BEAST</bold></light_purple>"
+    subtitle: "<light_purple>%species% has broken through!</light_purple>"
+    chat: "<light_purple>An Ultra Beast</light_purple> <white>%species%</white> <light_purple>broke through in the</light_purple> <green>%biome%</green> <gray>at</gray> %waypoint%<gray>.</gray>"
+    sound: "minecraft:entity.elder_guardian.curse"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: true
+    broadcast-radius: 0

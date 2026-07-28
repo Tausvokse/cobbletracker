@@ -1,0 +1,154 @@
+# ============================================================================
+#  CobbleTracker - config.yml
+#  Server rules and the tracker categories that drive the spawn beam, minimap
+#  waypoints, announcements, spawn history and stats. Edit and run /ct reload.
+# ============================================================================
+
+general-settings:
+  # Chat prefix (MiniMessage). Legacy &-codes also work.
+  chat-prefix: "<bold><gradient:#6C5CE7:#38BDF8>[CobbleTracker]</gradient></bold> "
+  # true = the beam and waypoints point at the chunk centre instead of the exact
+  # block (a light anti-x-ray option). false = pinpoint.
+  hide-exact-position: false
+  # Also flash a title/subtitle on screen when something spawns. Off by default -
+  # most servers just want the chat line. The title/subtitle text lives in
+  # announcements.yml.
+  show-title: false
+
+# --------------------------------------------------------------------------
+#  Spawn beam - a beacon-style light column over a tracked Pokemon while it's
+#  in your loaded chunks. It's the in-world "here it is" marker instead of
+#  dumping coordinates in chat, and it's presence-based: it shows whenever
+#  you're near the Pokemon and comes back if you leave and return. The server
+#  removes it the moment the Pokemon is caught, defeated or despawns.
+# --------------------------------------------------------------------------
+beam:
+  enabled: true
+  # 0 = auto: use your own render distance (a Pokemon only exists on your client
+  # inside that zone anyway). Set a number to cap it to a fixed block radius.
+  radius: 0
+  # Grace period in seconds: how long the beam waits after the Pokemon goes out
+  # of range before giving up. While it's in range the beam refreshes on its own,
+  # so this only matters once you've flown off - long enough that coming back
+  # still shows it. A real catch/faint/despawn removes it right away.
+  duration-seconds: 600
+  # Height of the beam column, in blocks.
+  height: 512
+
+# --------------------------------------------------------------------------
+#  Minimap integration. Each client tells the server which of these it has, and
+#  clicking "Create Waypoint" on a spawn announcement drops a marker in that
+#  mod's own format. No minimap mod is required - a client without one just gets
+#  the beam. Turn any format off server-wide here.
+# --------------------------------------------------------------------------
+minimap:
+  enabled: true
+  xaero: true        # Xaero's Minimap  (mod id: xaerominimap)
+  voxelmap: true     # VoxelMap         (mod id: voxelmap)
+  journeymap: true   # JourneyMap       (mod id: journeymap)
+  # Colour the marker to match the spawn beam (the category's tier colour). Turn
+  # off to use the minimap mod's default colour. Xaero's honours the colour; the
+  # VoxelMap/JourneyMap share format uses their default regardless.
+  use-beam-color: true
+
+# --------------------------------------------------------------------------
+#  Tracker categories. Add or remove a block here and every subsystem
+#  (announcements, history, stats, spawner) picks it up on the next /ct reload.
+#    name       label shown in the GUI sidebar
+#    spec       matcher: isLegendary / isShiny / isBoss / isUltraBeast /
+#               isMythical / species:<id> / label:<x> / level:>N (space = AND)
+#    color      tier accent (#RRGGBB)
+#    max-stored history cap, oldest goes first. 0 announces spawns but keeps no
+#               history for them.
+#    blacklist  comma-separated species this category never records
+#    enabled    master switch for the whole category (default true)
+#    dimensions comma list of dimension ids to track in; empty = everywhere,
+#               e.g. "minecraft:overworld, minecraft:the_nether". The built-in
+#               spawner honours this too, so a category limited to one dimension
+#               never places anything outside it.
+#    kind       pokemon (default). "block" is reserved for block tracking, which
+#               isn't implemented yet - such a category is simply never matched.
+#
+#  Optional spawn: block - CobbleTracker's own scheduled spawner for this tier:
+#    enabled                   turn the spawner on for this category
+#    interval-ticks            how often an attempt is made (20 ticks = 1 second)
+#    chance                    0.0-1.0 chance an attempt spawns something
+#    distribute-among-players  true  = one server-wide roll per interval, then a
+#                                      random eligible player becomes the anchor
+#                                      (spawn rate doesn't scale with player count)
+#                              false = an independent roll for every player
+#    player-cooldown-ticks     a player just used as anchor is skipped this long,
+#                              so spawns spread out (72000 = 1 hour)
+#    min-distance/max-distance blocks from the anchor player to place the spawn
+#    level                     "50-70" range or a single "60"
+#    shiny                     force the shiny aspect
+#    species-pool              comma list to pick from; empty = derive from the
+#                              category (all legendary/mythical/UB species, or any
+#                              species for shiny/boss)
+# --------------------------------------------------------------------------
+trackers:
+  legendaries:
+    name: "Legends"
+    spec: "isLegendary:true"
+    color: "#FF3333"
+    max-stored: 10
+    blacklist: ""
+    enabled: true
+    dimensions: ""               # empty = every dimension
+    spawn:
+      enabled: false
+      interval-ticks: 18000        # try every 15 minutes
+      chance: 0.20                 # 20% per attempt (one server-wide roll)
+      distribute-among-players: true
+      player-cooldown-ticks: 108000 # 90 minutes before the same player anchors again
+      min-distance: 32
+      max-distance: 80
+      level: "55-75"
+      shiny: false
+      species-pool: ""             # empty = any legendary species
+  shinies:
+    name: "Shinies"
+    spec: "isShiny:true"
+    color: "#55FF55"
+    max-stored: 15
+    blacklist: "magikarp"
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 12000        # try every 10 minutes
+      chance: 0.15
+      distribute-among-players: true
+      player-cooldown-ticks: 72000
+      min-distance: 24
+      max-distance: 64
+      level: "15-45"
+      shiny: true
+      species-pool: ""             # empty = any species (spawned shiny)
+  bosses:
+    name: "Bosses"
+    spec: "isBoss:true"
+    color: "#3333FF"
+    max-stored: 5
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 24000        # try every 20 minutes
+      chance: 0.25
+      distribute-among-players: true
+      player-cooldown-ticks: 144000
+      min-distance: 40
+      max-distance: 96
+      level: "60-90"
+      shiny: false
+      species-pool: "cobblemon:snorlax, cobblemon:gyarados, cobblemon:tyranitar"
+  ultrabeasts:
+    name: "Ultra Beasts"
+    spec: "isUltraBeast:true"
+    color: "#CC66FF"
+    max-stored: 5
+    blacklist: ""
+    enabled: true
+    dimensions: ""

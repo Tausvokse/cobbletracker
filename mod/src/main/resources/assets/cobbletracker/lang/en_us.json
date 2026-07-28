@@ -1,0 +1,37 @@
+{
+  "key.categories.cobbletracker": "CobbleTracker",
+  "key.cobbletracker.hud_menu": "Search for a Pokémon to hunt",
+
+  "gui.cobbletracker.title": "CobbleTracker",
+  "gui.cobbletracker.tab.all": "ALL",
+  "gui.cobbletracker.tab.stats": "STATS",
+  "gui.cobbletracker.empty": "No spawns recorded yet.",
+  "gui.cobbletracker.close": "Close",
+  "gui.cobbletracker.copied": "Copied %s",
+  "gui.cobbletracker.caught": "✓ caught",
+  "gui.cobbletracker.caught.by": "✓ %s",
+
+  "gui.cobbletracker.sort": "Change sort order",
+  "gui.cobbletracker.sort.newest": "⇅ Newest",
+  "gui.cobbletracker.sort.distance": "⇅ Distance",
+  "gui.cobbletracker.sort.species": "⇅ Species",
+  "gui.cobbletracker.sort.tier": "⇅ Tier",
+  "gui.cobbletracker.sort.caught": "⇅ Caught",
+
+  "gui.cobbletracker.stats.title": "Top Hunters",
+  "gui.cobbletracker.stats.empty": "No captures recorded yet.",
+
+  "gui.cobbletracker.search": "type a Pokémon name…",
+  "gui.cobbletracker.hunt.title": "Track a Pokémon",
+  "gui.cobbletracker.hunt.clear": "Clear",
+  "gui.cobbletracker.hunt.count": "Hunting %s",
+  "gui.cobbletracker.hunt.nomatches": "No matches",
+  "gui.cobbletracker.hunt.notloaded": "Species list not loaded yet",
+  "gui.cobbletracker.hunt.beam.on": "Beam: ON",
+  "gui.cobbletracker.hunt.beam.off": "Beam: OFF",
+  "gui.cobbletracker.hunt.beam.tooltip": "Show or hide the in-world spawn beams",
+
+  "gui.cobbletracker.admin.title": "CobbleTracker - Admin",
+
+  "hud.cobbletracker.hunting": "Hunting"
+}

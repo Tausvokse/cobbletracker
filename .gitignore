@@ -1,0 +1,33 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Minecraft run directories
+run/
+run-*/
+
+# Local live-test environments (multi-GB Minecraft installs, worlds)
+testserver/
+testclients/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+bin/
+out/
+
+# OS / logs
+.DS_Store
+Thumbs.db
+*.log
+
+# dev-run generated files
+dev-run/client.args
+dev-run/ghome/

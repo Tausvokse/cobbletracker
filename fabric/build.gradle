@@ -1,0 +1,79 @@
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+configurations {
+    common
+    shadowBundle
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    modImplementation "dev.architectury:architectury-fabric:${architectury_api_version}"
+    modImplementation "com.cobblemon:fabric:${cobblemon_version}"
+    // Kotlin runtime for Cobblemon when launching a dev client/server; not shipped in our jar.
+    modLocalRuntime "net.fabricmc:fabric-language-kotlin:1.13.3+kotlin.2.1.21"
+
+    common(project(path: ':mod', configuration: 'namedElements')) { transitive = false }
+    shadowBundle project(path: ':mod', configuration: 'transformProductionFabric')
+
+    // Logic module + YAML lib, bundled into the jar. Non-transitive so gson/slf4j (provided by
+    // Minecraft) are not shaded in.
+    shadowBundle(project(':common')) { transitive = false }
+    shadowBundle "org.yaml:snakeyaml:${snakeyaml_version}"
+
+    // Dev-runtime only (runServer/runClient): shadowBundle is jar-only, so the logic module and YAML
+    // lib must be on the dev classpath explicitly. Not shipped in the remapped jar.
+    runtimeOnly(project(':common')) { transitive = false }
+    runtimeOnly "org.yaml:snakeyaml:${snakeyaml_version}"
+}
+
+// Dev run configs: two clients (distinct usernames + run dirs so both can join one offline server)
+// and a dedicated server. Launch with :fabric:runServer, :fabric:runClient, :fabric:runClientBlue.
+loom {
+    runs {
+        client {
+            client()
+            name = "Fabric Client (TrackerRed)"
+            runDir = "run/client-red"
+            programArgs "--username", "TrackerRed", "--width", "950", "--height", "720",
+                    "--quickPlayMultiplayer", "localhost:25565"
+        }
+        clientBlue {
+            client()
+            name = "Fabric Client (TrackerBlue)"
+            runDir = "run/client-blue"
+            programArgs "--username", "TrackerBlue", "--width", "950", "--height", "720"
+        }
+        server {
+            server()
+            name = "Fabric Server"
+            runDir = "run/server"
+        }
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand version: project.version, mod_id: mod_id, mod_name: mod_name, mod_description: mod_description
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    // Relocate SnakeYAML so it can never clash with another mod bundling a different version.
+    relocate 'org.yaml.snakeyaml', 'com.cobbletracker.libs.snakeyaml'
+    archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveClassifier = null
+}

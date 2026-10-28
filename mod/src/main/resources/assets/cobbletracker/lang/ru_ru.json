@@ -1,0 +1,50 @@
+{
+  "gui.cobbletracker.notify.enabled": "ON/OFF",
+  "gui.cobbletracker.notify.sound": "Sound",
+  "gui.cobbletracker.notify.chat": "Chat",
+  "gui.cobbletracker.notify.title_channel": "Title",
+  "gui.cobbletracker.notify.actionbar": "Bar",
+  "key.categories.cobbletracker": "CobbleTracker",
+  "key.cobbletracker.hud_menu": "Поиск покемона для отслеживания",
+
+  "gui.cobbletracker.title": "CobbleTracker",
+  "gui.cobbletracker.tab.all": "ВСЕ",
+  "gui.cobbletracker.tab.stats": "СТАТЫ",
+  "gui.cobbletracker.tab.notify": "УВЕДОМЛЕНИЯ",
+  "gui.cobbletracker.notify.title": "Ваши уведомления",
+  "gui.cobbletracker.notify.empty": "На сервере нет категорий трекера.",
+  "gui.cobbletracker.notify.radius": "в радиусе %s блоков",
+  "gui.cobbletracker.notify.serveroff": "выключено на сервере",
+  "gui.cobbletracker.notify.overflow": "ещё %s - используйте /ct notify",
+  "gui.cobbletracker.empty": "Пока нет записей о спавнах.",
+  "gui.cobbletracker.close": "Закрыть",
+  "gui.cobbletracker.copied": "Скопировано: %s",
+  "gui.cobbletracker.caught": "✓ пойман",
+  "gui.cobbletracker.caught.by": "✓ %s",
+
+  "gui.cobbletracker.sort": "Изменить сортировку",
+  "gui.cobbletracker.sort.newest": "⇅ Новые",
+  "gui.cobbletracker.sort.distance": "⇅ Дистанция",
+  "gui.cobbletracker.sort.species": "⇅ Вид",
+  "gui.cobbletracker.sort.tier": "⇅ Категория",
+  "gui.cobbletracker.sort.caught": "⇅ Пойманные",
+
+  "gui.cobbletracker.stats.title": "Лучшие охотники",
+  "gui.cobbletracker.stats.empty": "Пока нет пойманных.",
+
+  "gui.cobbletracker.search": "введите имя покемона…",
+  "gui.cobbletracker.hunt.title": "Отслеживать покемона",
+  "gui.cobbletracker.hunt.clear": "Сбросить",
+  "gui.cobbletracker.hunt.count": "Отслеживается: %s",
+  "gui.cobbletracker.hunt.nomatches": "Ничего не найдено",
+  "gui.cobbletracker.hunt.notloaded": "Список видов ещё не загружен",
+  "gui.cobbletracker.hunt.beam.on": "Луч: ВКЛ",
+  "gui.cobbletracker.hunt.beam.off": "Луч: ВЫКЛ",
+  "gui.cobbletracker.hunt.beam.tooltip": "Показать или скрыть лучи над спавнами",
+  "gui.cobbletracker.hunt.added": "Отслеживается: %s",
+  "gui.cobbletracker.hunt.removed": "Больше не отслеживается: %s",
+
+  "gui.cobbletracker.admin.title": "CobbleTracker - Админ",
+
+  "hud.cobbletracker.hunting": "Отслеживание"
+}

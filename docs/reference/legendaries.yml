@@ -1,0 +1,105 @@
+# ============================================================================
+#  CobbleTracker - legendaries.yml
+#  Where and when CobbleTracker's own director may place each legendary.
+#
+#  This file is only used when the director is actually running. Under
+#  "mode: auto" (the default) it stands down when the upstream natural pool
+#  contains matching legendary entries. Mod presence alone does not disable it.
+#  An enabled species-JSON group has its own shared scheduler. Run /checklegendary
+#  to identify the active controller.
+#
+#  The vocabulary matches Cobblemon's own spawn-condition JSON on purpose:
+#    species     namespaced id
+#    weight      relative likelihood among the rules that fit; higher = likelier
+#    biomes      list of biome ids and "#namespace:tag" tags; empty = anywhere.
+#                Cobblemon's own tags are the easy ones: #cobblemon:is_mountain,
+#                is_ocean, is_desert, is_forest, is_cold, is_jungle, is_swamp,
+#                is_badlands, is_peak, is_cave, is_magical, is_sandy ...
+#    time        day | night | any
+#    isRaining   true / false; omit for "don't care"
+#    isThundering same
+#    dimensions  list of dimension ids; empty = any
+#    minY/maxY   absolute height band for the spawn position
+#
+#  Available species depend on the installed Cobblemon version and packs.
+#  The director filters unavailable or unimplemented species before placement.
+# ============================================================================
+
+legendaries:
+  - species: "cobblemon:rayquaza"
+    weight: 1.0
+    biomes: ["#cobblemon:is_peak", "#cobblemon:is_mountain"]
+    time: day
+    isRaining: false
+    minY: 120
+
+  - species: "cobblemon:lugia"
+    weight: 1.0
+    biomes: ["#cobblemon:is_ocean"]
+    time: night
+
+  - species: "cobblemon:hooh"
+    weight: 1.0
+    biomes: ["#cobblemon:is_mountain", "#cobblemon:is_highlands"]
+    time: day
+
+  - species: "cobblemon:articuno"
+    weight: 1.0
+    biomes: ["#cobblemon:is_freezing", "#cobblemon:is_cold"]
+
+  - species: "cobblemon:zapdos"
+    weight: 1.0
+    biomes: ["#cobblemon:is_highlands", "#cobblemon:is_plains"]
+    isThundering: true
+
+  - species: "cobblemon:moltres"
+    weight: 1.0
+    biomes: ["#cobblemon:is_badlands", "#cobblemon:is_desert"]
+    time: day
+    isRaining: false
+
+  - species: "cobblemon:mewtwo"
+    weight: 0.6
+    biomes: ["#cobblemon:is_cave", "#cobblemon:is_deep_dark"]
+
+  - species: "cobblemon:xerneas"
+    weight: 0.8
+    biomes: ["#cobblemon:is_forest", "#cobblemon:is_floral"]
+    time: day
+
+  - species: "cobblemon:latias"
+    weight: 1.0
+    biomes: ["#cobblemon:is_jungle", "#cobblemon:is_forest"]
+    time: day
+
+  - species: "cobblemon:latios"
+    weight: 1.0
+    biomes: ["#cobblemon:is_jungle", "#cobblemon:is_forest"]
+    time: night
+
+  - species: "cobblemon:regirock"
+    weight: 1.0
+    biomes: ["#cobblemon:is_desert", "#cobblemon:is_badlands"]
+
+  - species: "cobblemon:regice"
+    weight: 1.0
+    biomes: ["#cobblemon:is_freezing", "#cobblemon:is_glacial"]
+
+  - species: "cobblemon:registeel"
+    weight: 1.0
+    biomes: ["#cobblemon:is_cave"]
+    maxY: 40
+
+  - species: "cobblemon:regieleki"
+    weight: 0.8
+    biomes: ["#cobblemon:is_plains", "#cobblemon:is_savanna"]
+    isThundering: true
+
+  - species: "cobblemon:regidrago"
+    weight: 0.8
+    biomes: ["#cobblemon:is_mountain", "#cobblemon:is_highlands"]
+
+  - species: "cobblemon:regigigas"
+    weight: 0.5
+    biomes: ["#cobblemon:is_freezing", "#cobblemon:is_glacial"]
+    time: night

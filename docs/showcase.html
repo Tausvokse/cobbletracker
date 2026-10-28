@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CobbleTracker — Rare spawns. Clear signal.</title><meta name="description" content="Coloured beams, automatic minimap points, history, hunts and configurable species spawns for Cobblemon."><style>html{color-scheme:dark}body{margin:0;background:#0d1019;color:#dce0ef;font:16px/1.8 system-ui,sans-serif}main{max-width:960px;margin:auto;padding:32px 24px 80px}img{max-width:100%;height:auto;display:block;margin:24px auto}h2,h3{color:#f6f1ff;line-height:1.3;margin-top:36px}a{color:#57dae4}code{font:0.9em Consolas,monospace;background:#1c2132;padding:2px 5px;border-radius:4px}pre{overflow:auto;background:#151a29;padding:20px;border:1px solid #30374a;border-radius:12px}pre code{background:none;padding:0}li{padding:4px 0}table{width:100%;border-collapse:collapse}th,td{padding:10px;text-align:left;border-bottom:1px solid #30374a}.back{font-size:14px;text-decoration:none}</style></head><body><main><a class="back" href="./">← CobbleTracker documentation</a><p><img src="assets/cobbletracker-header.png" alt="CobbleTracker — rare spawns, clear signal" width="1000"></p>
+<p align="center"><strong>Find the rare spawn. Follow its beam. Make the next encounter your own.</strong></p>
+<p align="center">Minecraft <strong>1.21.1</strong> · <strong>Fabric / NeoForge</strong> · Java <strong>21</strong> · Cobblemon <strong>1.7–1.8.2</strong></p>
+<p>CobbleTracker brings rare encounters into view with coloured beams, automatic minimap points, spawn history and personal hunts. Server owners can define their own categories, notifications and scheduled Pokémon spawns — including native biome, weather, time and structure conditions.</p>
+<p><a href="https://taushop.me/cobbletracker/">Read the wiki</a> · <a href="https://github.com/Tausvokse/cobbletracker/issues">Report an issue</a></p>
+<p><img src="assets/cobbletracker-find.png" alt="Find the rare ones" width="1000"></p>
+<h2>A signal you can follow</h2>
+<ul>
+<li><strong>Coloured spawn beams</strong> mark tracked wild Pokémon in your loaded chunks. Configure their range, height and out-of-range grace period.</li>
+<li><strong>Automatic temporary minimap points</strong> appear in the beam colour, follow the Pokémon and clear when tracking ends. No chat click or permanent waypoint import is needed.</li>
+<li><strong>Xaero’s Minimap, JourneyMap and VoxelMap integrations</strong> use compatible, separately installed client minimap mods. CobbleTracker itself does not draw a minimap. VoxelMap’s available loader support differs; see the wiki.</li>
+<li><strong>Spawn history</strong> keeps encounter details, locations and capture outcomes. Browse it with <code>/ct</code>; use <code>/lastlegend</code> for legendary history, with a chat fallback when the client GUI is unavailable.</li>
+</ul>
+<p><img src="assets/cobbletracker-spawns.png" alt="You control the spawns" width="1000"></p>
+<h2>Your Pokémon. Your spawn rules.</h2>
+<p>Add species files in <code>config/cobbletracker/spawns/</code> and use native Cobblemon spawn entries:</p>
+<ul>
+<li><strong><code>replace</code></strong> removes that species’ upstream natural Cobblemon/datapack spawns, including matching herd members, while the custom species and group are enabled.</li>
+<li><strong><code>append</code></strong> keeps those natural entries and adds your scheduled rules.</li>
+<li>Define <strong>biomes, dimensions, day/night, rain, thunder, structures, height and other supported native conditions</strong>, including anticonditions and version-compatible presets.</li>
+<li>Give a group <strong>one shared server roll and timer</strong>. The legendary group defaults to <strong>35% per 72000 server ticks</strong> — approximately one hour at 20 TPS. The bundled Mew example starts disabled.</li>
+<li>Weight eligible <strong>player/rule pairs</strong>. Mew with weight 1 near one player and Latias with weight 2 near another give conditional shares of <strong>33.33% / 66.67%</strong>. More eligible blocks do not multiply a rule’s weight.</li>
+</ul>
+<p><code>/checkspawn legendary</code> shows the aggregate species shares, highest first, separately from the shared roll chance and countdown. These shares total 100% after a successful roll; current conditions must still permit placement.</p>
+<p>Commands, breeding and direct scripted spawns remain available with <code>replace</code>. Disabling/removing a replacement or switching to <code>append</code> restores the upstream entries on a successful reload.</p>
+<p><strong>Keeping an existing setup?</strong> The legacy category scheduler and <code>legendaries.yml</code> remain available. <code>mode: auto</code> checks actual natural tier coverage; removing that line still means AUTO. Use <code>always</code> when you deliberately want the legacy scheduler to run alongside the natural pool. <code>/checklegendary</code> identifies the active spawning source.</p>
+<p><strong>Legacy spawn height limit.</strong> Set <code>max-vertical-distance: 16</code> inside a category&#x27;s <code>spawn:</code> block to keep placement within 16 blocks above or below the player. This is also the default for older configs. The legacy spawner supports cave floors and fractional surface heights such as snow and slabs. If the chosen Pokémon does not fit, it tries other positions within the same limits; it never falls back to a distant surface height. Species JSON and upstream natural spawns use Cobblemon&#x27;s own placement settings.</p>
+<p><img src="assets/cobbletracker-players.png" alt="Play your way" width="1000"></p>
+<h2>Useful information, on your terms</h2>
+<p><strong>Independent notification controls.</strong> Mute chat, titles, actionbar or sound without disabling your beams and minimap points. The category master switch still turns off that category for you.</p>
+<pre><code>/ct notify mythicals chat off
+/ct notify mythicals title off
+/ct notify mythicals actionbar off
+/ct notify mythicals sound off</code></pre>
+<p><strong>Chat coordinates are off by default.</strong> Server owners can enable <code>general-settings.show-spawn-location-in-chat</code>. Nearby live entity indicators still show their targets; coordinate rounding is not a way to conceal a loaded Pokémon.</p>
+<p><strong>Personal hunt mode.</strong> Press <code>\</code> by default, or check Minecraft’s Controls, to choose species to highlight among nearby loaded wild Pokémon. Your hunt list persists between sessions. This highlights encounters; it does not create them. Server policy can disable hunting.</p>
+<p><strong>Categories that fit your server.</strong> Legendary, Mythic, Ancient, Ultra-Beast, Shiny, Boss, Starter and regional-form categories are configurable. Add species, label, form, level, IV, biome and other matcher conditions. Categories classify existing Pokémon; they do not add new species to Cobblemon.</p>
+<p><strong>A little more for your community.</strong> Optional modules include boss health bars, temporary catch protection, server-first Hall of Fame records, capture statistics, spawn/catch command hooks and asynchronous Discord webhook notifications.</p>
+<p><strong>Placeholders for your displays.</strong> Feed cached roll chances, countdowns, conditional species shares and recent species into compatible chat, TAB or sidebar mods. Optional integrations cover Fabric Text Placeholder API, NeoForge Forge PlaceholderAPI and direct TAB callbacks. Your display mod must support the selected integration.</p>
+<h3>Commands at a glance</h3>
+<table><thead><tr><th>Command</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>/ct</code></td><td>Open spawn history; client mod required for the GUI</td></tr>
+<tr><td><code>/lastlegend</code></td><td>Recent legendary history / chat fallback</td></tr>
+<tr><td><code>/checkspawn &lt;group&gt;</code></td><td>Aggregate conditional species shares and group timer</td></tr>
+<tr><td><code>/checklegendary</code></td><td>Inspect the active legendary spawning source</td></tr>
+<tr><td><code>/spawnlegendary</code></td><td>Operator attempt using the active JSON group or legacy director</td></tr>
+<tr><td><code>/ct notify</code></td><td>Personal notification channels and radius</td></tr>
+<tr><td><code>/ct hof</code></td><td>Server-first capture records</td></tr>
+<tr><td><code>/ct theme &lt;name&gt;</code></td><td>Choose a GUI theme</td></tr>
+<tr><td><code>/ct reload</code></td><td>Operator configuration reload</td></tr>
+<tr><td><code>/ct admin</code></td><td>Operator temporary live settings</td></tr>
+</tbody></table>
+<p>LuckPerms nodes are used when available; otherwise vanilla permission levels apply. The admin panel changes live values, while <code>/ct reload</code> reapplies the configuration on disk.</p>
+<p><img src="assets/cobbletracker-install.png" alt="Install and explore" width="1000"></p>
+<h2>Installation</h2>
+<ol>
+<li>Use <strong>Minecraft 1.21.1</strong> and <strong>Java 21</strong>. Choose the JAR for <strong>Fabric</strong> or <strong>NeoForge</strong>.</li>
+<li>Install <strong>Cobblemon</strong> and its required loader/Kotlin dependencies. Fabric also requires <strong>Fabric API</strong>. CobbleTracker has no Architectury API runtime requirement.</li>
+<li>Install CobbleTracker on the <strong>server</strong> for tracking, commands and server modules. Add it on the <strong>client</strong> for beams, the history GUI, automatic map points and hunt mode. Singleplayer uses both parts in the same installation.</li>
+<li>Add a compatible client minimap if you want map points. Configure <code>config/cobbletracker/</code> and run <code>/ct reload</code> after edits. Rejected reloads retain the working configuration.</li>
+</ol>
+<p>Compatibility checks cover Cobblemon <strong>1.7.0, 1.7.3, 1.8.0, 1.8.1 and 1.8.2</strong> on both loaders, with gameplay/provider checks scoped separately. Match every dependency to Minecraft 1.21.1 and its loader; not every combination of minimap, renderer, shader or addon is interchangeable.</p>
+<p><strong>Start here:</strong> <a href="https://taushop.me/cobbletracker/#quickstart">Installation &amp; quick start</a> · <a href="https://taushop.me/cobbletracker/#scheduled-spawns">Custom species spawns</a> · <a href="https://taushop.me/cobbletracker/#placeholders">Placeholders</a> · <a href="https://taushop.me/cobbletracker/#troubleshooting">Troubleshooting</a></p>
+<p>If you would like to support development: <a href="https://www.paypal.com/ncp/payment/XWSP342YCQ52G">PayPal</a>.</p>
+</main></body></html>

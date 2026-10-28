@@ -1,0 +1,76 @@
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+configurations {
+    common
+    shadowBundle
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
+dependencies {
+    modCompileOnly 'eu.pb4:placeholder-api:2.4.2+1.21'
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    modImplementation "com.cobblemon:fabric:${cobblemon_version}"
+    // Kotlin is supplied by the loader in production.
+    modLocalRuntime "net.fabricmc:fabric-language-kotlin:1.13.3+kotlin.2.1.21"
+    compileOnly "org.jetbrains.kotlin:kotlin-reflect:2.1.21"
+
+    common(project(path: ':mod', configuration: 'namedElements')) { transitive = false }
+    shadowBundle project(path: ':mod', configuration: 'transformProductionFabric')
+
+    // Minecraft already supplies Gson and SLF4J; exclude transitive dependencies.
+    shadowBundle(project(':common')) { transitive = false }
+    shadowBundle "org.yaml:snakeyaml:${snakeyaml_version}"
+
+    // shadowBundle does not add dependencies to development runs.
+    runtimeOnly(project(':common')) { transitive = false }
+    runtimeOnly "org.yaml:snakeyaml:${snakeyaml_version}"
+}
+
+loom {
+    runs {
+        client {
+            client()
+            name = "Fabric Client (TrackerRed)"
+            runDir = "run/client-red"
+            programArgs "--username", "TrackerRed", "--width", "950", "--height", "720",
+                    "--quickPlayMultiplayer", "localhost:25565"
+        }
+        clientBlue {
+            client()
+            name = "Fabric Client (TrackerBlue)"
+            runDir = "run/client-blue"
+            programArgs "--username", "TrackerBlue", "--width", "950", "--height", "720"
+        }
+        server {
+            server()
+            name = "Fabric Server"
+            runDir = "run/server"
+        }
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand version: project.version, mod_id: mod_id, mod_name: mod_name, mod_description: mod_description
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    // Isolate SnakeYAML from other mods.
+    relocate 'org.yaml.snakeyaml', 'com.cobbletracker.libs.snakeyaml'
+    archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveClassifier = null
+}

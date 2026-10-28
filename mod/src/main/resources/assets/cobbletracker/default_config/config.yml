@@ -1,0 +1,424 @@
+# ============================================================================
+#  CobbleTracker - config.yml
+#  Server rules and the tracker categories that drive the spawn beam, minimap
+#  waypoints, announcements, spawn history and stats. Edit and run /ct reload.
+# ============================================================================
+
+general-settings:
+  # Chat prefix (MiniMessage). Legacy &-codes also work.
+  chat-prefix: "<bold><gradient:#6C5CE7:#38BDF8>[CobbleTracker]</gradient></bold> "
+  # Round X/Z metadata to chunk centres; Y and nearby live entity markers stay exact.
+  hide-exact-position: false
+  # Also flash a title/subtitle on screen when something spawns. Off by default -
+  # most servers just want the chat line. The title/subtitle text lives in
+  # announcements.yml.
+  show-title: false
+  # Include coordinates in spawn chat. Minimap points do not require this.
+  show-spawn-location-in-chat: false
+
+# --------------------------------------------------------------------------
+#  Spawn beam - a beacon-style light column over a tracked Pokemon while it's
+#  in your loaded chunks. It's the in-world "here it is" marker instead of
+#  dumping coordinates in chat, and it's presence-based: it shows whenever
+#  you're near the Pokemon and comes back if you leave and return. The server
+#  removes it the moment the Pokemon is caught, defeated or despawns.
+# --------------------------------------------------------------------------
+beam:
+  enabled: true
+  # 0 = auto: use your own render distance (a Pokemon only exists on your client
+  # inside that zone anyway). Set a number to cap it to a fixed block radius.
+  radius: 0
+  # Grace period in seconds: how long the beam waits after the Pokemon goes out
+  # of range before giving up. While it's in range the beam refreshes on its own,
+  # so this only matters once you've flown off - long enough that coming back
+  # still shows it. A real catch/faint/despawn removes it right away.
+  duration-seconds: 600
+  # Height of the beam column, in blocks.
+  height: 512
+
+# --------------------------------------------------------------------------
+#  Automatic temporary points for loaded tracked Pokemon. No chat click needed.
+#  Install a supported minimap to see points. Turn integrations off here.
+# --------------------------------------------------------------------------
+minimap:
+  enabled: true
+  xaero: true        # Xaero's Minimap  (mod id: xaerominimap)
+  voxelmap: true     # VoxelMap         (mod id: voxelmap)
+  journeymap: true   # JourneyMap       (mod id: journeymap)
+  # Colour the marker to match the spawn beam (the category's tier colour). Turn
+  # off to use white for automatic points.
+  use-beam-color: true
+
+# --------------------------------------------------------------------------
+#  Personal hunt mode - the client's "\" menu, where a player picks species to
+#  track and gets an amber beam plus on-screen arrows for them.
+#
+#  It runs entirely on the client, off entities it has already been sent, so
+#  this is a rule the client honours rather than something the server enforces.
+#  Turn it off on a server where finding rare spawns is meant to be the
+#  challenge: the "\" menu then refuses to open and the hunt beams stay dark.
+#  A player's saved species list is kept either way, and comes back if they
+#  join a server that allows it.
+# --------------------------------------------------------------------------
+hunt:
+  enabled: true
+
+# Independent groups used by spawns/<species>_spawn.json. One roll per server,
+# followed by weighted selection among eligible player/rule pairs with native conditions.
+# Species chances shown by /checkspawn are conditional shares, separate from this roll.
+spawn-groups:
+  legendary:
+    enabled: true
+    interval-ticks: 72000
+    chance: 0.35
+
+# --------------------------------------------------------------------------
+#  World Boss Raids - Display an epic Minecraft Boss Bar (ServerBossEvent)
+#  at the top of players' screens when a wild Boss Pokemon is within range,
+#  synchronizing its real-time HP percentage as players battle it.
+# --------------------------------------------------------------------------
+world-boss:
+  enabled: true
+  range: 128
+  boss-bar-color: "RED"        # PINK, BLUE, RED, GREEN, YELLOW, PURPLE, WHITE
+  boss-bar-style: "NOTCHED_10" # PROGRESS, NOTCHED_6, NOTCHED_10, NOTCHED_12, NOTCHED_20
+
+# --------------------------------------------------------------------------
+#  Interactive Discord Integration - Rich Discord embeds with IVs, nature,
+#  ability, location, and follow-up outcome alerts when tracked spawns are
+#  caught, defeated in battle, or despawn.
+# --------------------------------------------------------------------------
+discord-integration:
+  enabled: true
+  rich-embeds: true
+  post-captures: true
+  post-defeats: true
+  post-despawns: true
+
+# --------------------------------------------------------------------------
+#  Catch Protection / Grace Period - Grants an exclusive catch/battle priority
+#  window to the anchor player who triggered the spawn. Prevents spawn-camping
+#  and snipes by blocking other players from engaging the Pokemon during the
+#  grace period.
+# --------------------------------------------------------------------------
+spawn-protection:
+  enabled: true
+  grace-period-seconds: 60
+  notify-others: true
+
+# --------------------------------------------------------------------------
+#  Hall of Fame & Server Records - Tracks historical milestone records
+#  (first server catch, rarest ivs, shiny catches). Broadcasts a celebratory
+#  server announcement when a player secures a "Server First" catch!
+#  Viewable in-game with /cobbletracker hof.
+# --------------------------------------------------------------------------
+hall-of-fame:
+  enabled: true
+  broadcast-server-first: true
+  categories:
+    - "legendaries"
+    - "mythicals"
+    - "ancients"
+    - "ultrabeasts"
+    - "shinies"
+
+# --------------------------------------------------------------------------
+#  Tracker categories. Add or remove a block here and every subsystem
+#  (announcements, history, stats, spawner) picks it up on the next /ct reload.
+#    name       label shown in the GUI sidebar
+#    spec       matcher, space-separated (space = AND):
+#                 isLegendary  isShiny  isMythical  isUltraBeast  isBoss
+#                 isAncient  isStarter  isAlolan  isHisuian  isGalarian  isPaldean
+#                 species:<id>       label:<x>        aspect:<x>
+#                 gender:female      nature:adamant   form:alolan
+#                 level:>50          perfectIvs:>=4   ivs:>=150
+#                 scale:>1.15        (>1 = unusually large, <1 = small)
+#               About the surroundings rather than the Pokemon:
+#                 biome:jungle       dimension:minecraft:the_nether
+#                 time:day|night     weather:rain|thunder|clear
+#                 y:<0
+#               Numeric tokens take > < >= <= or a bare number for equality.
+#               Prefix a token with "!" to negate it, and use "|" inside a value
+#               for "or":
+#                 spec: "isShiny !species:magikarp"
+#                 spec: "isLegendary species:rayquaza|lugia"
+#                 spec: "isShiny time:night biome:swamp"
+#    color      tier accent (#RRGGBB)
+#    max-stored history cap, oldest goes first. 0 announces spawns but keeps no
+#               history for them.
+#    blacklist  comma-separated species this category never records
+#    enabled    master switch for the whole category (default true)
+#    dimensions comma list of dimension ids to track in; empty = everywhere,
+#               e.g. "minecraft:overworld, minecraft:the_nether". The built-in
+#               spawner honours this too, so a category limited to one dimension
+#               never places anything outside it.
+#
+#  Command hooks - console commands run when this category's spawn appears or is
+#  caught. This is how you wire up rewards, an economy or permissions without any
+#  extra mod. Written as a YAML list; a leading "/" is optional.
+#    on-spawn-commands  run when a spawn is recorded (%player% is empty here)
+#    on-catch-commands  run when one of its spawns is caught
+#  Placeholders: %player% %species% %category% %world% %biome% %x% %y% %z%
+#  They run as the server console at permission level 2, positioned at the spawn,
+#  so "~ ~ ~" and "execute" work as you'd expect.
+#  !! Anyone who can edit this file can run any command as the console. Treat
+#     write access to config.yml as equivalent to operator access.
+#  A %player% or %species% that isn't a plain name is refused rather than pasted
+#  into the command line, and the skip is logged.
+#
+#  Optional spawn: block - CobbleTracker's own scheduled spawner for this tier.
+#  Whatever it builds still has to satisfy the category's own spec, or nothing is
+#  placed and the log says so once - so a category is only spawnable if a plain
+#  "species level=N [shiny]" can meet its spec. isShiny and species/label specs
+#  work; isBoss/isLegendary-style specs need a species-pool that already fits
+#  (e.g. real legendary species for isLegendary), and isBoss can't be produced at
+#  all, so leave that category's spawner off.
+#    enabled                   turn the spawner on for this category
+#    mode                      auto (default) | always | never
+#                              auto = run ONLY while Cobblemon's own spawn pool
+#                              has no spawns for this tier. Vanilla Cobblemon
+#                              ships no legendary spawns at all, so out of the
+#                              box CobbleTracker is the one placing them - but
+#                              install a legendary spawn datapack and this
+#                              spawner steps aside instead of doubling the rate
+#                              and overriding the datapack's biome rules.
+#                              Run /checklegendary in game to see which is which.
+#    context-aware             pick the species by the anchor player's biome,
+#                              time of day and weather, using legendaries.yml.
+#                              If no rule fits where they are, the attempt is
+#                              skipped rather than placing something absurd.
+#    interval-ticks            how often an attempt is made (20 ticks = 1 second)
+#    chance                    0.0-1.0 chance an attempt spawns something
+#    distribute-among-players  true  = one server-wide roll per interval, then a
+#                                      random eligible player becomes the anchor
+#                                      (spawn rate doesn't scale with player count)
+#                              false = an independent roll for every player
+#    player-cooldown-ticks     a player just used as anchor is skipped this long,
+#                              so spawns spread out (72000 = 1 hour)
+#    min-distance/max-distance horizontal blocks from the anchor player
+#    max-vertical-distance     maximum Y difference from the player (0..256; default 16)
+#    level                     "50-70" range or a single "60"
+#    shiny                     force the shiny aspect (a spec of isShiny:true
+#                              already implies this)
+#    species-pool              comma list to pick from; empty = derive from the
+#                              category (all legendary/mythical/UB species, or any
+#                              species for shiny/boss)
+# --------------------------------------------------------------------------
+trackers:
+  legendaries:
+    name: "Legendary"
+    spec: "isLegendary:true"
+    color: "#FF3333"
+    max-stored: 15
+    blacklist: ""
+    enabled: true
+    dimensions: ""               # empty = every dimension
+    on-spawn-commands: []
+    on-catch-commands: []        # e.g. - "give %player% minecraft:diamond 3"
+    spawn:
+      # On by default: vanilla Cobblemon never spawns legendaries at all, so
+      # without this they only ever come from shrines. Under mode "auto" this
+      # steps aside the moment a legendary spawn datapack is installed.
+      enabled: true
+      mode: auto
+      context-aware: true
+      interval-ticks: 36000        # try every 30 minutes
+      chance: 0.30                 # 30% per attempt (one server-wide roll)
+      distribute-among-players: true
+      player-cooldown-ticks: 108000 # 90 minutes before the same player anchors again
+      min-distance: 32
+      max-distance: 80
+      max-vertical-distance: 16
+      level: "55-75"
+      shiny: false
+      species-pool: ""             # empty = any legendary species
+  mythicals:
+    name: "Mythic"
+    spec: "isMythical:true"
+    color: "#FF66CC"
+    max-stored: 10
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 48000        # try every 40 minutes
+      chance: 0.20
+      distribute-among-players: true
+      player-cooldown-ticks: 144000
+      min-distance: 32
+      max-distance: 80
+      level: "50-70"
+      shiny: false
+      species-pool: ""
+  ancients:
+    name: "Ancient"
+    spec: "isAncient:true"
+    color: "#C88B32"
+    max-stored: 10
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 36000        # try every 30 minutes
+      chance: 0.25
+      distribute-among-players: true
+      player-cooldown-ticks: 108000
+      min-distance: 32
+      max-distance: 80
+      level: "55-75"
+      shiny: false
+      species-pool: ""
+  ultrabeasts:
+    name: "Ultra-Beast"
+    spec: "isUltraBeast:true"
+    color: "#CC66FF"
+    max-stored: 10
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 36000        # try every 30 minutes
+      chance: 0.25
+      distribute-among-players: true
+      player-cooldown-ticks: 108000
+      min-distance: 32
+      max-distance: 80
+      level: "55-75"
+      shiny: false
+      species-pool: ""
+  shinies:
+    name: "Shiny"
+    spec: "isShiny:true"
+    color: "#55FF55"
+    max-stored: 25
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 12000        # try every 10 minutes
+      chance: 0.15
+      distribute-among-players: true
+      player-cooldown-ticks: 72000
+      min-distance: 24
+      max-distance: 64
+      level: "15-45"
+      shiny: true
+      species-pool: ""             # empty = any species (spawned shiny)
+  bosses:
+    name: "Bosses"
+    spec: "isBoss:true"
+    color: "#3333FF"
+    max-stored: 10
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 24000        # try every 20 minutes
+      chance: 0.25
+      distribute-among-players: true
+      player-cooldown-ticks: 144000
+      min-distance: 40
+      max-distance: 96
+      level: "60-90"
+      shiny: false
+      species-pool: "cobblemon:snorlax, cobblemon:gyarados, cobblemon:tyranitar"
+  starters:
+    name: "Starter"
+    spec: "isStarter:true"
+    color: "#38BDF8"
+    max-stored: 15
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 18000        # try every 15 minutes
+      chance: 0.20
+      distribute-among-players: true
+      player-cooldown-ticks: 72000
+      min-distance: 24
+      max-distance: 64
+      level: "5-25"
+      shiny: false
+      species-pool: ""
+  alolan:
+    name: "Alolan"
+    spec: "isAlolan:true"
+    color: "#00E5FF"
+    max-stored: 10
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 24000        # try every 20 minutes
+      chance: 0.20
+      distribute-among-players: true
+      player-cooldown-ticks: 72000
+      min-distance: 24
+      max-distance: 64
+      level: "20-45"
+      shiny: false
+      species-pool: ""
+  hisuian:
+    name: "Hisuian"
+    spec: "isHisuian:true"
+    color: "#D4AF37"
+    max-stored: 10
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 24000        # try every 20 minutes
+      chance: 0.20
+      distribute-among-players: true
+      player-cooldown-ticks: 72000
+      min-distance: 24
+      max-distance: 64
+      level: "20-45"
+      shiny: false
+      species-pool: ""
+  galarian:
+    name: "Galarian"
+    spec: "isGalarian:true"
+    color: "#E040FB"
+    max-stored: 10
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 24000        # try every 20 minutes
+      chance: 0.20
+      distribute-among-players: true
+      player-cooldown-ticks: 72000
+      min-distance: 24
+      max-distance: 64
+      level: "20-45"
+      shiny: false
+      species-pool: ""
+  paldean:
+    name: "Paldean"
+    spec: "isPaldean:true"
+    color: "#FF5722"
+    max-stored: 10
+    blacklist: ""
+    enabled: true
+    dimensions: ""
+    spawn:
+      enabled: false
+      interval-ticks: 24000        # try every 20 minutes
+      chance: 0.20
+      distribute-among-players: true
+      player-cooldown-ticks: 72000
+      min-distance: 24
+      max-distance: 64
+      level: "20-45"
+      shiny: false
+      species-pool: ""

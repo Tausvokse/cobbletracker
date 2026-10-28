@@ -1,0 +1,1 @@
+﻿{"required": true, "minVersion": "0.8", "package": "com.cobbletracker.fabric.mixin", "compatibilityLevel": "JAVA_21", "mixins": ["SpeciesAdditionsAdapterMixin"], "injectors": {"defaultRequire": 1}}

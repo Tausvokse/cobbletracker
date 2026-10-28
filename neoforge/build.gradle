@@ -1,0 +1,84 @@
+architectury {
+    platformSetupLoomIde()
+    neoForge()
+}
+
+configurations {
+    common
+    shadowBundle
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentNeoForge.extendsFrom common
+}
+
+dependencies {
+    compileOnly('com.envyful.papi:neo21:2.1.0') { transitive = false }
+    neoForge "net.neoforged:neoforge:${neoforge_version}"
+    modImplementation "com.cobblemon:neoforge:${cobblemon_version}"
+
+    common(project(path: ':mod', configuration: 'namedElements')) { transitive = false }
+    shadowBundle project(path: ':mod', configuration: 'transformProductionNeoForge')
+
+    // Minecraft already supplies Gson and SLF4J; exclude transitive dependencies.
+    shadowBundle(project(':common')) { transitive = false }
+    shadowBundle "org.yaml:snakeyaml:${snakeyaml_version}"
+
+    // Cobblemon requires KotlinForForge in development runs too.
+    modLocalRuntime "thedarkcolour:kotlinforforge-neoforge:5.12.0"
+    // Development runs need Kotlin libraries on the module path; KFF nesting is not unpacked here.
+    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:2.4.0"
+    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-reflect:2.4.0"
+    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.11.0"
+    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.11.0"
+    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.11.0"
+    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.11.0"
+
+    // shadowBundle does not add dependencies to development runs.
+    forgeRuntimeLibrary(project(':common')) { transitive = false }
+    forgeRuntimeLibrary "org.yaml:snakeyaml:${snakeyaml_version}"
+}
+
+loom {
+    runs {
+        client {
+            client()
+            name = "NeoForge Client (TrackerRed)"
+            runDir = "run/client-red"
+            programArgs "--username", "TrackerRed", "--width", "950", "--height", "720"
+        }
+        clientBlue {
+            client()
+            name = "NeoForge Client (TrackerBlue)"
+            runDir = "run/client-blue"
+            programArgs "--username", "TrackerBlue", "--width", "950", "--height", "720"
+        }
+        server {
+            server()
+            name = "NeoForge Server"
+            runDir = "run/server"
+        }
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand version: project.version, mod_id: mod_id, mod_name: mod_name, mod_description: mod_description,
+                mod_license: mod_license, mod_authors: mod_authors,
+                neoforge_version: neoforge_version, minecraft_version_range: minecraft_version_range,
+                loader_version_range: loader_version_range
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    // Isolate SnakeYAML from other mods.
+    relocate 'org.yaml.snakeyaml', 'com.cobbletracker.libs.snakeyaml'
+    archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveClassifier = null
+}

@@ -1,0 +1,204 @@
+# ============================================================================
+#  CobbleTracker - announcements.yml
+#  How each category's spawn is announced. Keys match the category ids in
+#  config.yml (legendaries, shinies, bosses, ultrabeasts, ...).
+#
+#  Text is MiniMessage: <gold>, <bold>, <#RRGGBB>, <gradient:#a:#b>...</gradient>.
+#  Legacy &-codes (&6&l) work too. Placeholders:
+#    %species% %biome% %world% %x% %y% %z%
+#    %location%  -> optional whole " at coordinates" chat fragment.
+#    %waypoint%  -> optional copy-coordinate link. Chat locations are hidden
+#                   unless general-settings.show-spawn-location-in-chat is true.
+#                   Minimap points appear automatically and need no chat click.
+#
+#  title / subtitle only show if general-settings.show-title is true in
+#  config.yml. By default spawns are chat-only.
+#
+#  actionbar      a line above the hotbar; "" = none. Independent of show-title,
+#                 so it's the quiet option: a cue with no chat line and no title
+#                 card. It can't be clicked, so %waypoint% appears there as
+#                 plain coordinates.
+#  sound          sound id, or "" for none
+#  sound-volume   playback volume (1.0 = normal)
+#  sound-pitch    playback pitch  (1.0 = normal)
+#  waypoint       allow copying visible chat coordinates (true/false)
+#  play-to-all    true = everyone; false = only players near the spawn
+#  broadcast-radius 0 = whole server; >0 = only players within N blocks
+#
+#  discord-webhook   a Discord webhook url, or "" for none. Posts happen off the
+#                    server thread, so a slow or unreachable Discord never costs
+#                    you tick time; if it falls far behind, the oldest queued
+#                    announcements are dropped and the log says so.
+#                    The url is a credential - anyone holding it can post to that
+#                    channel - so CobbleTracker never writes it to the log.
+#                    Coordinates obey hide-exact-position exactly as chat does.
+#  discord-template  the message. Plain Discord markdown (**bold**), NOT
+#                    MiniMessage. Placeholders: %species% %category% %biome%
+#                    %world% %x% %y% %z%. Empty = a sensible default.
+# ============================================================================
+
+notifications:
+  legendaries:
+    enabled: true
+    title: "<gold><bold>LEGENDARY SPAWN</bold></gold>"
+    subtitle: "<aqua>%species%</aqua> <white>appeared in the</white> <green>%biome%</green>!"
+    chat: "<white>A wild</white> <aqua>%species%</aqua> <white>appeared in the</white> <green>%biome%</green>%location%<gray>.</gray>"
+    actionbar: ""
+    sound: "cobblemon:pc.on"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: true
+    broadcast-radius: 0
+    discord-webhook: ""
+    discord-template: "**A wild %species%** appeared in %biome% at %x%, %y%, %z%"
+
+  mythicals:
+    enabled: true
+    title: "<gradient:#FF66CC:#FFAAE5><bold>MYTHICAL SPAWN</bold></gradient>"
+    subtitle: "<light_purple>%species%</light_purple> <white>appeared in the</white> <green>%biome%</green>!"
+    chat: "<white>A mystical</white> <light_purple>%species%</light_purple> <white>manifested in the</white> <green>%biome%</green>%location%<gray>.</gray>"
+    actionbar: ""
+    sound: "minecraft:block.amethyst_block.resonate"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: true
+    broadcast-radius: 0
+    discord-webhook: ""
+    discord-template: "**A mythical %species%** manifested in %biome% at %x%, %y%, %z%"
+
+  ancients:
+    enabled: true
+    title: "<#C88B32><bold>ANCIENT DISCOVERY</bold></#C88B32>"
+    subtitle: "<gold>%species%</gold> <white>emerged from the past!</white>"
+    chat: "<white>An ancient paradox</white> <#C88B32>%species%</#C88B32> <white>emerged in the</white> <green>%biome%</green>%location%<gray>.</gray>"
+    actionbar: ""
+    sound: "minecraft:entity.ravager.roar"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: true
+    broadcast-radius: 0
+    discord-webhook: ""
+    discord-template: "**An ancient %species%** emerged in %biome% at %x%, %y%, %z%"
+
+  ultrabeasts:
+    enabled: true
+    title: "<light_purple><bold>ULTRA BEAST</bold></light_purple>"
+    subtitle: "<light_purple>%species% has broken through!</light_purple>"
+    chat: "<light_purple>An Ultra Beast</light_purple> <white>%species%</white> <light_purple>broke through in the</light_purple> <green>%biome%</green>%location%<gray>.</gray>"
+    actionbar: ""
+    sound: "minecraft:entity.elder_guardian.curse"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: true
+    broadcast-radius: 0
+    discord-webhook: ""
+    discord-template: "**An Ultra Beast %species%** broke through in %biome% at %x%, %y%, %z%"
+
+  shinies:
+    enabled: true
+    title: ""
+    subtitle: "<yellow>A Shiny %species% has spawned nearby!</yellow>"
+    chat: "<yellow>✨ A Shiny %species% spawned</yellow>%location%<yellow>!</yellow>"
+    actionbar: ""
+    sound: "cobblemon:pc.on"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: false
+    broadcast-radius: 200
+    discord-webhook: ""
+    discord-template: "✨ **A Shiny %species%** spawned in %biome% at %x%, %y%, %z%"
+
+  bosses:
+    enabled: true
+    title: "<dark_red><bold>BOSS DETECTED</bold></dark_red>"
+    subtitle: "<red>Prepare for battle against %species%!</red>"
+    chat: "<red>A Boss</red> <dark_red>%species%</dark_red> <red>appeared in the</red> <green>%biome%</green>%location%<gray>.</gray>"
+    actionbar: ""
+    sound: "minecraft:entity.ender_dragon.growl"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: true
+    broadcast-radius: 0
+    discord-webhook: ""
+    discord-template: "⚔️ **A Boss %species%** appeared in %biome% at %x%, %y%, %z%"
+
+  starters:
+    enabled: true
+    title: ""
+    subtitle: "<#38BDF8>A wild Starter %species% appeared!</#38BDF8>"
+    chat: "<#38BDF8>⭐ A wild Starter</#38BDF8> <white>%species%</white> <#38BDF8>appeared in the</#38BDF8> <green>%biome%</green>%location%<gray>.</gray>"
+    actionbar: ""
+    sound: "minecraft:entity.player.levelup"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: false
+    broadcast-radius: 200
+    discord-webhook: ""
+    discord-template: "⭐ **A wild Starter %species%** appeared in %biome% at %x%, %y%, %z%"
+
+  alolan:
+    enabled: true
+    title: ""
+    subtitle: "<#00E5FF>An Alolan %species% appeared nearby!</#00E5FF>"
+    chat: "<#00E5FF>🌴 An Alolan</#00E5FF> <white>%species%</white> <#00E5FF>appeared in the</#00E5FF> <green>%biome%</green>%location%<gray>.</gray>"
+    actionbar: ""
+    sound: "cobblemon:pc.on"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: false
+    broadcast-radius: 200
+    discord-webhook: ""
+    discord-template: "🌴 **An Alolan %species%** appeared in %biome% at %x%, %y%, %z%"
+
+  hisuian:
+    enabled: true
+    title: ""
+    subtitle: "<#D4AF37>A Hisuian %species% appeared nearby!</#D4AF37>"
+    chat: "<#D4AF37>📜 A Hisuian</#D4AF37> <white>%species%</white> <#D4AF37>appeared in the</#D4AF37> <green>%biome%</green>%location%<gray>.</gray>"
+    actionbar: ""
+    sound: "cobblemon:pc.on"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: false
+    broadcast-radius: 200
+    discord-webhook: ""
+    discord-template: "📜 **A Hisuian %species%** appeared in %biome% at %x%, %y%, %z%"
+
+  galarian:
+    enabled: true
+    title: ""
+    subtitle: "<#E040FB>A Galarian %species% appeared nearby!</#E040FB>"
+    chat: "<#E040FB>⚡ A Galarian</#E040FB> <white>%species%</white> <#E040FB>appeared in the</#E040FB> <green>%biome%</green>%location%<gray>.</gray>"
+    actionbar: ""
+    sound: "cobblemon:pc.on"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: false
+    broadcast-radius: 200
+    discord-webhook: ""
+    discord-template: "⚡ **A Galarian %species%** appeared in %biome% at %x%, %y%, %z%"
+
+  paldean:
+    enabled: true
+    title: ""
+    subtitle: "<#FF5722>A Paldean %species% appeared nearby!</#FF5722>"
+    chat: "<#FF5722>🔥 A Paldean</#FF5722> <white>%species%</white> <#FF5722>appeared in the</#FF5722> <green>%biome%</green>%location%<gray>.</gray>"
+    actionbar: ""
+    sound: "cobblemon:pc.on"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    waypoint: true
+    play-to-all: false
+    broadcast-radius: 200
+    discord-webhook: ""
+    discord-template: "🔥 **A Paldean %species%** appeared in %biome% at %x%, %y%, %z%"

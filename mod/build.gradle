@@ -1,0 +1,25 @@
+architectury {
+    common('fabric', 'neoforge')
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/cobbletracker.accesswidener")
+}
+
+dependencies {
+    modCompileOnly "com.cobblemon:mod:${cobblemon_version}"
+    // Loader-provided Kotlin and environment annotations are compile-only here.
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
+    compileOnly "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    compileOnly 'net.fabricmc:sponge-mixin:0.15.4+mixin.0.8.7'
+    compileOnly 'io.github.llamalad7:mixinextras-common:0.5.0'
+
+    implementation "org.yaml:snakeyaml:${snakeyaml_version}"
+
+    api project(':common')
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') { useJUnitPlatform() }

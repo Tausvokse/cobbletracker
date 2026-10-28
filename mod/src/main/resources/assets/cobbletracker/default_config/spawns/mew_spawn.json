@@ -1,0 +1,20 @@
+{
+  "species": "cobblemon:mew",
+  "enabled": false,
+  "mode": "append",
+  "group": "legendary",
+  "spawns": [
+    {
+      "id": "cobbletracker-mew-example",
+      "pokemon": "mew",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "ultra-rare",
+      "level": "50-70",
+      "weight": 1.0,
+      "condition": {
+        "biomes": ["#cobblemon:is_jungle"]
+      }
+    }
+  ]
+}
